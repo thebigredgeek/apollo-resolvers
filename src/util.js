@@ -12,3 +12,5 @@ export const Promisify = fn => {
     }
   });
 };
+
+export const isNotNullOrUndefined = val => val !== null && val !== undefined;

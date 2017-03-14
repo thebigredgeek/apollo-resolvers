@@ -5,7 +5,17 @@ Expressive and composable resolvers for Apollostack's GraphQL server
 
 [![CircleCI](https://circleci.com/gh/thebigredgeek/apollo-resolvers/tree/master.svg?style=shield)](https://circleci.com/gh/thebigredgeek/apollo-resolvers/tree/master)  [![Beerpay](https://beerpay.io/thebigredgeek/apollo-resolvers/badge.svg?style=beer-square)](https://beerpay.io/thebigredgeek/apollo-resolvers)  [![Beerpay](https://beerpay.io/thebigredgeek/apollo-resolvers/make-wish.svg?style=flat-square)](https://beerpay.io/thebigredgeek/apollo-resolvers?focus=wish)
 
-## Installation and usage
+## Overview
+
+When standing up a GraphQL backend, one of the first design decisions you will undoubtedly need to make is how you will handle authentication, authorization, and errors.  GraphQL resolvers present an entirely new paradigm that existing patterns for RESTful APIs fail to adequately address.  Many developers end up writing duplicitous authentication and authorization checking code in a vast majority of their resolver functions, as well as error handling logic to shield the client for encountering exposed internal errors.  The goal of `apollo-resolvers` is to simplify the developer experience in working with GraphQL by abstracting away many of these decisions into a nice, expressive design pattern.
+
+`apollo-resolvers` provides a pattern for creating resolvers that works essentially like reactive middleware.  As a developer, you create a chain of resolvers to satisfy small bits of the overall problem of taking a GraphQL request and binding it to a model method or some other form of business logic.
+
+With `apollo-resolvers`, data flows between composed resolvers in a natural order.  Requests flow down from parent resolvers to child resolvers until they reach a point that a value is returned or the last child resolver is reached.  Thrown errors bubble up from child resolvers to parent resolvers until an additional transformed error is either thrown or returned from an error callback or the last parent resolver is reached.
+
+In addition to the design pattern that `apollo-resolvers` provides for creating expressive and composible resolvers, there are also several provided helper methods and classes for handling context creation and cleanup, combining resolver definitions for presentation to `graphql-tools` via `makeExecutableSchema`, and more.
+
+## Quick start
 
 Install the package:
 
@@ -19,14 +29,18 @@ Create a base resolver for last-resort error masking:
 import { createResolver } from 'apollo-resolvers';
 import { createError, isInstance } from 'apollo-errors';
 
-const UnknownError = createError({
+const UnknownError = createError('UnknownError', {
   message: 'An unknown error has occurred!  Please try again later'
 });
 
 export const baseResolver = createResolver(
-  null, // don't pass a resolver function, we only care about errors
+   //incomine requests will pass through this resolver
+  null,
   
-  // Only mask errors that aren't already apollo-errors, such as ORM errors etc
+  /* 
+    Only mask outgoing errors that aren't already apollo-errors, 
+    such as ORM errors etc
+  */
   (root, args, context, error) => isInstance(error) ? error : new UnknownError()
 );
 ```
@@ -37,11 +51,11 @@ import { createError } from 'apollo-errors';
 
 import baseResolver from './baseResolver';
 
-const ForbiddenError = createError({
+const ForbiddenError = createError('ForbiddenError', {
   message: 'You are not allowed to do this'
 });
 
-const AuthenticationRequiredError = createError({
+const AuthenticationRequiredError = createError('AuthenticationRequiredError', {
   message: 'You must be logged in to do this'
 });
 
@@ -55,35 +69,160 @@ export const isAuthenticatedResolver = baseResolver.createResolver(
 export const isAdminResolver = isAuthenticatedResolver.createResolver(
   // Extract the user and make sure they are an admin
   (root, args, { user }) => {
+    /*
+      If thrown, this error will bubble up to baseResolver's
+      error callback (if present).  If unhandled, the error is returned to
+      the client within the `errors` array in the response.
+    */
     if (!user.isAdmin) throw new ForbiddenError();
+    
+    /*
+      Since we aren't returning anything from the
+      request resolver, the request will continue on
+      to the next child resolver or the response will
+      return undefined if no child exists.
+    */
   }
 )
 ```
 
-Create a few real-work resolvers for our app:
-
+Create a profile update resolver for our user type:
 ```javascript
-import { isAuthenticatedResolver, isAdminResolver } from './acl';
+import { isAuthenticatedResolver } from './acl';
 import { createError } from 'apollo-errors';
 
-const NotYourUserError = createError({
+const NotYourUserError = createError('NotYourUserError', {
   message: 'You cannot update the profile for other users'
 });
 
 const updateMyProfile = isAuthenticatedResolver.createResolver(
   (root, { input }, { user, models: { UserModel } }) => {
+    /*
+      If thrown, this error will bubble up to isAuthenticatedResolver's error callback
+      (if present) and then to baseResolver's error callback.  If unhandled, the error
+      is returned to the client within the `errors` array in the response.
+    */
     if (!user.isAdmin && input.id !== user.id) throw new NotYourUserError();
     return UserModel.update(input);
   }
 );
 
-const banUser = isAdminResolver.createResolver(
-  (root, { input }, { models: { UserModel } }) => UserModel.ban(input)
-);
+export default {
+  Mutation: {
+    updateMyProfile
+  }
+};
 ```
 
+Create an admin resolver:
+```javascript
+import { createError, isInstance } from 'apollo-errors';
+import { isAuthenticatedResolver, isAdminResolver } from './acl';
 
-### To-do
+const ExposedError = createError('ExposedError', {
+  message: 'An unknown error has occurred'
+});
 
-* Finish docs
-* Add more integration tests
+const banUser = isAdminResolver.createResolver(
+  (root, { input }, { models: { UserModel } }) => UserModel.ban(input),
+  (root, args, context, error) => {
+    /*
+      For admin users, let's tell the user what actually broke
+      in the case of an unhandled exception
+    */
+    
+    if (!isInstance(error)) throw new ExposedError({
+      // overload the message
+      message: error.message
+    });
+  }
+);
+
+export default {
+  Mutation: {
+    banUser
+  }
+};
+```
+
+Combine your resolvers into a single definition ready for use by `graphql-tools`:
+```javascript
+import { combineResolvers } from 'apollo-resolvers';
+
+import { updateMyProfile } from './user';
+import { banUser } from './admin';
+
+/*
+  This combines our multiple resolver definition
+  objects into a single definition object
+*/
+const resolvers = combineResolvers([
+  updateMyProfile,
+  banUser
+]);
+
+export default resolvers;
+```
+
+## Resolver context
+
+Resolvers are provided a mutable context object that is shared between all resolvers for a given request.  A common pattern with GraphQL is inject request-specific model instances into the resolver context for each request.  Models frequently reference one another, and unbinding circular references can be a pain.  `apollo-resolvers` provides a request context factory that allows you to bind context disposal to server responses, calling a `dispose` method on each model instance attached to the context to do any sort of required reference cleanup necessary to avoid memory leaks:
+
+``` javascript
+import express from 'express';
+import bodyParser from 'body-parser';
+import { graphqlExpress } from 'graphql-server-express';
+import { createExpressContext } from 'apollo-resolvers';
+import { formatError as apolloFormatError, createError } from 'apollo-errors';
+
+import { UserModel } from './models/user';
+import schema from './schema';
+
+const UnknownError = createError('UnknownError', {
+  message: 'An unknown error has occurred.  Please try again later'
+});
+
+const formatError = error => {
+  let e = apolloFormatError(error);
+
+  if (e instanceof GraphQLError) {
+    e = apolloFormatError(new UnknownError({
+      data: {
+        originalMessage: e.message,
+        originalError: e.name
+      }
+    }));
+  }
+
+  return e;
+};
+
+const app = express();
+
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  req.user = null; // fetch the user making the request if desired
+});
+
+app.post('/graphql', graphqlExpress((req, res) => {
+  const user = req.user;
+  
+  const models = {
+    User: new UserModel(user)
+  };
+  
+  const context = createExpressContext({
+    models,
+    user
+  }, res);
+  
+  return {
+    schema,
+    formatError, // error formatting via apollo-errors
+    context // our resolver context
+  };
+}));
+
+export default app;
+```

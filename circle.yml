@@ -4,8 +4,7 @@ machine:
 
 dependencies:
   override:
-    - make environment
-    - make dependencies
+    - make configure
 
 test:
   override:

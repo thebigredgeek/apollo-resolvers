@@ -7,15 +7,24 @@ import { createExpressContext, Context } from '../../src/context';
 describe('(unit) src/context.js', () => {
   describe('createExpressContext', () => {
     it('returns a context', () => {
-      const models = {};
-      const user = {};
+      const models = {
+        bar: 'foo'
+      };
+      const user = {
+        id: '123'
+      };
+      const other = {
+        foo: 'bar'
+      };
       const context = createExpressContext({
         models,
-        user
+        user,
+        other
       })
       expect(context instanceof Context).to.be.true;
       expect(context.user).to.equal(user);
       expect(context.models).to.equal(models);
+      expect(context.other).to.equal(other);
     });
     describe('returned context', () => {
       let models = null

@@ -3,7 +3,8 @@ import { stub } from 'sinon';
 
 import {
   isFunction,
-  Promisify
+  Promisify,
+  isNotNullOrUndefined
 } from '../../src/util';
 
 describe('(unit) src/util.js', () => {
@@ -93,5 +94,38 @@ describe('(unit) src/util.js', () => {
         });
       });
     })
+  });
+  describe('isNotNullOrUndefined', () => {
+    context('value is null', () => {
+      expect(isNotNullOrUndefined(null)).to.be.false;
+    });
+    context('value is undefined', () => {
+      expect(isNotNullOrUndefined(undefined)).to.be.false;
+    });
+    context('value is not null or undefined', () => {
+      expect([
+        '',
+        'a',
+        true,
+        false,
+        {},
+        0,
+        1,
+        -1,
+        d => d,
+        []
+      ].map(v => isNotNullOrUndefined(v))).to.eql([
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]);
+    });
   })
 });
