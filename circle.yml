@@ -1,0 +1,14 @@
+machine:
+  node:
+    version: 5.5.0
+
+dependencies:
+  override:
+    - make environment
+    - make dependencies
+
+test:
+  override:
+    - make lint
+    - make
+    - make test
