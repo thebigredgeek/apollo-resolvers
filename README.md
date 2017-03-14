@@ -81,3 +81,9 @@ const banUser = isAdminResolver.createResolver(
   (root, { input }, { models: { UserModel } }) => UserModel.ban(input)
 );
 ```
+
+
+### To-do
+
+* Finish docs
+* Add more integration tests
