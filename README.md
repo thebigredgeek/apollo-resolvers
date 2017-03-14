@@ -7,7 +7,7 @@ Expressive and composable resolvers for Apollostack's GraphQL server
 
 ## Overview
 
-When standing up a GraphQL backend, one of the first design decisions you will undoubtedly need to make is how you will handle authentication, authorization, and errors.  GraphQL resolvers present an entirely new paradigm that existing patterns for RESTful APIs fail to adequately address.  Many developers end up writing duplicitous authorization checks in a vast majority of their resolver functions, as well as error handling logic to shield the client for encountering exposed internal errors.  The goal of `apollo-resolvers` is to simplify the developer experience in working with GraphQL by abstracting away many of these decisions into a nice, expressive design pattern.
+When standing up a GraphQL backend, one of the first design decisions you will undoubtedly need to make is how you will handle authentication, authorization, and errors.  GraphQL resolvers present an entirely new paradigm that existing patterns for RESTful APIs fail to adequately address.  Many developers end up writing duplicitous authorization checks in a vast majority of their resolver functions, as well as error handling logic to shield the client from encountering exposed internal errors.  The goal of `apollo-resolvers` is to simplify the developer experience in working with GraphQL by abstracting away many of these decisions into a nice, expressive design pattern.
 
 `apollo-resolvers` provides a pattern for creating resolvers that work, essentially, like reactive middleware.  As a developer, you create a chain of resolvers to satisfy small bits of the overall problem of taking a GraphQL request and binding it to a model method or some other form of business logic.
 
