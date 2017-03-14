@@ -31,7 +31,7 @@ export const baseResolver = createResolver(
 );
 ```
 
-Create a few ACL child resolvers:
+Create a few child resolvers for access control:
 ```javascript
 import { createError } from 'apollo-errors';
 
