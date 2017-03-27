@@ -203,6 +203,7 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   req.user = null; // fetch the user making the request if desired
+  next();
 });
 
 app.post('/graphql', graphqlExpress((req, res) => {
