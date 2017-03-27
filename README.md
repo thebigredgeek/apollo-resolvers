@@ -49,7 +49,7 @@ Create a few child resolvers for access control:
 ```javascript
 import { createError } from 'apollo-errors';
 
-import baseResolver from './baseResolver';
+import { baseResolver } from './baseResolver';
 
 const ForbiddenError = createError('ForbiddenError', {
   message: 'You are not allowed to do this'
