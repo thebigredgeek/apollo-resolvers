@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jobstart/apollo-resolvers.git"
+    "url": "git+https://github.com/thebigredgeek/apollo-resolvers.git"
   },
   "keywords": [
     "graphql",
@@ -18,14 +18,13 @@
   ],
   "author": "Andrew E. Rhyne",
   "contributors": [
-    "Andrew E. Rhyne <rhyneandrew@gmail.com",
     "Zach Tratar <ztratar@gmail.com"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Jobstart/apollo-resolvers/issues"
+    "url": "https://github.com/thebigredgeek/apollo-resolvers/issues"
   },
-  "homepage": "https://github.com/Jobstart/apollo-resolvers#readme",
+  "homepage": "https://github.com/thebigredgeek/apollo-resolvers#readme",
   "dependencies": {
     "deepmerge": "^1.3.1"
   },
