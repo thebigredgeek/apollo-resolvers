@@ -1,6 +1,6 @@
 {
   "name": "apollo-resolvers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Expressive and composable resolvers for Apollostack's GraphQL server Edit",
   "main": "dist/index.js",
   "scripts": {
