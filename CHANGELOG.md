@@ -1,3 +1,11 @@
+
+1.0.2 / 2017-04-19
+==================
+
+* Fix: updated dist
+* Misc: package changes
+* Docs: updated docs
+
 1.0.1 / 2017-03-14
 ==================
 
