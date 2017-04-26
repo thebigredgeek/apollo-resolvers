@@ -34,7 +34,7 @@ describe('(unit) src/resolver.js', () => {
         stub(r3, 'handle', r3.handle);
 
         const resolver = createResolver(r1.handle, r1.error).createResolver(r2.handle, r2.error).createResolver(r3.handle, r3.error).createResolver(
-          (root, args, context) => {
+          (root, args, context, info) => {
             throw new Error('first error');
           }
         );
@@ -50,6 +50,25 @@ describe('(unit) src/resolver.js', () => {
           })
           .catch(e => next(e))
       });
+    });
+    describe('all resolver parameters passed', () => {
+      it('passes all parameters', (next) => {
+        const resolver = createResolver(
+          (root, args, context, info) => {
+            return { root, args, context, info }
+          }
+        );
+        
+        resolver('root', 'args', 'context', 'info')
+          .then(({root, args, context, info}) => {
+            expect(root).to.equal('root');
+            expect(args).to.equal('args');
+            expect(context).to.equal('context');
+            expect(info).to.equal('info')
+            next();
+          })
+          .catch(e => next(e));
+      })
     });
     describe('error handling', () => {
       context('when error callback exists', () => {
