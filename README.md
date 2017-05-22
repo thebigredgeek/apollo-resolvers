@@ -149,16 +149,16 @@ Combine your resolvers into a single definition ready for use by `graphql-tools`
 ```javascript
 import { combineResolvers } from 'apollo-resolvers';
 
-import { updateMyProfile } from './user';
-import { banUser } from './admin';
+import User from './user';
+import Admin from './admin';
 
 /*
   This combines our multiple resolver definition
   objects into a single definition object
 */
 const resolvers = combineResolvers([
-  updateMyProfile,
-  banUser
+  User,
+  Admin
 ]);
 
 export default resolvers;
