@@ -15,6 +15,10 @@ With `apollo-resolvers`, data flows between composed resolvers in a natural orde
 
 In addition to the design pattern that `apollo-resolvers` provides for creating expressive and composible resolvers, there are also several provided helper methods and classes for handling context creation and cleanup, combining resolver definitions for presentation to `graphql-tools` via `makeExecutableSchema`, and more.
 
+## Example from Apollo Day
+
+[![Authentication and Error Handling in GraphQL](https://img.youtube.com/vi/xaorvBjCE7A/0.jpg)](https://www.youtube.com/watch?v=xaorvBjCE7A)
+
 ## Quick start
 
 Install the package:
