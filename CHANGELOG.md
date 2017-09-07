@@ -1,10 +1,16 @@
 
+1.0.3 / 2017-09-07
+==================
+
+  * Docs: updated docs to reference apollo-server (@thebigredgeek)
+  * Package: updated keywords (@thebigredgeek)
+
 1.0.2 / 2017-04-19
 ==================
 
-* Fix: updated dist
-* Misc: package changes
-* Docs: updated docs
+* Fix: updated dist (@thebigredgeek)
+* Misc: package changes (@thebigredgeek)
+* Docs: updated docs (@thebigredgeek)
 
 1.0.1 / 2017-03-14
 ==================
