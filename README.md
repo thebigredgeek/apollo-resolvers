@@ -40,9 +40,9 @@ const UnknownError = createError('UnknownError', {
 export const baseResolver = createResolver(
    //incoming requests will pass through this resolver like a no-op
   null,
-  
-  /* 
-    Only mask outgoing errors that aren't already apollo-errors, 
+
+  /*
+    Only mask outgoing errors that aren't already apollo-errors,
     such as ORM errors etc
   */
   (root, args, context, error) => isInstance(error) ? error : new UnknownError()
@@ -79,7 +79,7 @@ export const isAdminResolver = isAuthenticatedResolver.createResolver(
       the client within the `errors` array in the response.
     */
     if (!user.isAdmin) throw new ForbiddenError();
-    
+
     /*
       Since we aren't returning anything from the
       request resolver, the request will continue on
@@ -134,7 +134,7 @@ const banUser = isAdminResolver.createResolver(
       For admin users, let's tell the user what actually broke
       in the case of an unhandled exception
     */
-    
+
     if (!isInstance(error)) throw new ExposedError({
       // overload the message
       message: error.message
@@ -175,7 +175,7 @@ Resolvers are provided a mutable context object that is shared between all resol
 ``` javascript
 import express from 'express';
 import bodyParser from 'body-parser';
-import { graphqlExpress } from 'graphql-server-express';
+import { graphqlExpress } from 'apollo-server-express';
 import { createExpressContext } from 'apollo-resolvers';
 import { formatError as apolloFormatError, createError } from 'apollo-errors';
 
@@ -212,16 +212,16 @@ app.use((req, res, next) => {
 
 app.post('/graphql', graphqlExpress((req, res) => {
   const user = req.user;
-  
+
   const models = {
     User: new UserModel(user)
   };
-  
+
   const context = createExpressContext({
     models,
     user
   }, res);
-  
+
   return {
     schema,
     formatError, // error formatting via apollo-errors
