@@ -175,6 +175,7 @@ Resolvers are provided a mutable context object that is shared between all resol
 ``` javascript
 import express from 'express';
 import bodyParser from 'body-parser';
+import { GraphQLError } from 'graphql';
 import { graphqlExpress } from 'apollo-server-express';
 import { createExpressContext } from 'apollo-resolvers';
 import { formatError as apolloFormatError, createError } from 'apollo-errors';
