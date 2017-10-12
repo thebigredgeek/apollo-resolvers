@@ -1,4 +1,4 @@
-import assert from 'assert';
+import * as assert from 'assert';
 
 export const createExpressContext = (data, res) => {
   data = data || {};
@@ -14,6 +14,8 @@ export const createExpressContext = (data, res) => {
 };
 
 export class Context {
+  models: any;
+  user: any;
   constructor (data) {
     Object.keys(data).forEach(key => {
       this[key] = data[key]

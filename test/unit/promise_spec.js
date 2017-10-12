@@ -2,9 +2,9 @@ import { expect } from 'chai';
 
 import {
   usePromise
-} from '../../src/promise';
+} from '../../dist/promise';
 
-describe('(unit) src/promise.js', () => {
+describe('(unit) dist/promise.js', () => {
   after(() => usePromise(Promise));
   describe('usePromise', () => {
     context('with another valid promise lib', () => {

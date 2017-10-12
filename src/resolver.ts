@@ -20,8 +20,7 @@ export const createResolver = (resFn, errFn) => {
       });
     });
   };
-
-  baseResolver.createResolver = (cResFn, cErrFn) => {
+  baseResolver['createResolver'] = (cResFn, cErrFn) => {
     const Promise = getPromise();
 
     const childResFn = (root, args, context) => {
@@ -38,7 +37,7 @@ export const createResolver = (resFn, errFn) => {
     const childErrFn = (root, args, context, err) => {
       // Start with either the child error handler or a no-op (returns null)
       const entry = isFunction(cErrFn) ? Promisify(cErrFn)(root, args, context, err) : Promise.resolve(null);
-      
+
       return entry.then(r => {
         // If the child returns a value, throw it
         if (isNotNullOrUndefined(r)) throw r;
@@ -52,7 +51,7 @@ export const createResolver = (resFn, errFn) => {
         }) : Promise.resolve(null);
       });
     };
-    
+
     // Create the child resolver and return it
     return createResolver(childResFn, childErrFn);
   }

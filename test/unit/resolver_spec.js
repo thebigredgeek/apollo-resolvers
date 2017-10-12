@@ -2,12 +2,12 @@ import { expect } from 'chai';
 import { stub } from 'sinon';
 import Bluebird from 'bluebird';
 
-import { createResolver } from '../../src/resolver';
-import { usePromise } from '../../src/promise';
+import { createResolver } from '../../dist/resolver';
+import { usePromise } from '../../dist/promise';
 
 let originalPromise = Promise;
 
-describe('(unit) src/resolver.js', () => {
+describe('(unit) dist/resolver.js', () => {
   describe('createResolver', () => {
     describe('resolver chaining', () => {
       it('works', (next) => {

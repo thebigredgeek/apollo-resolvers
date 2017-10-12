@@ -9,7 +9,7 @@ PKG ?= $(if $(YARN),$(YARN),$(NODE) $(shell which npm))
 .PHONY:
 
 all: clean .PHONY
-	babel src -d dist --source-maps
+	tsc
 
 configure: .PHONY
 	@NODE_ENV= $(PKG) install

@@ -2,23 +2,23 @@ import { expect } from 'chai';
 
 import {
   combineResolvers
-} from '../../src/helper';
+} from '../../dist/helper';
 
 import {
   usePromise
-} from '../../src/promise';
+} from '../../dist/promise';
 
 import {
   createExpressContext
-} from '../../src/context';
+} from '../../dist/context';
 
 import {
   createResolver
-} from '../../src/resolver';
+} from '../../dist/resolver';
 
-import * as api from '../../src/index';
+import * as api from '../../dist/index';
 
-describe('(unit) src/index.js', () => {
+describe('(unit) dist/index.js', () => {
   it('is as documented', () => {
     expect(api).to.eql({
       combineResolvers,
