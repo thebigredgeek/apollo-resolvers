@@ -14,8 +14,8 @@ export const createExpressContext = (data, res) => {
 };
 
 export class Context {
-  models: any;
-  user: any;
+  models: Object;
+  user: Object;
   constructor (data) {
     Object.keys(data).forEach(key => {
       this[key] = data[key]
