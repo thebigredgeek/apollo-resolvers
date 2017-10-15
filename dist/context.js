@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
+;
 exports.createExpressContext = (data, res) => {
     data = data || {};
     data.user = data.user || null;
