@@ -3,7 +3,7 @@ import Bluebird from 'bluebird';
 
 import {
   usePromise
-} from '../../src/promise';
+} from '../../dist/promise';
 
 const Promise = global.Promise;
 

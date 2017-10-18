@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { spy } from 'sinon';
 import EventEmitter from 'events';
 
-import { createExpressContext, Context } from '../../src/context';
+import { createExpressContext, Context } from '../../dist/context';
 
 describe('(unit) src/context.js', () => {
   describe('createExpressContext', () => {

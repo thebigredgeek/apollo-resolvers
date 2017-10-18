@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import express from 'express';
 import Promise from 'bluebird';
 
-import { createExpressContext } from '../../src/context';
+import { createExpressContext } from '../../dist/context';
 
 const createServer = () => {
   const app = express();

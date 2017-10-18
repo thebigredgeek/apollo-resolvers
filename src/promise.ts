@@ -1,4 +1,4 @@
-import assert from 'assert';
+import * as assert from 'assert';
 
 // Expose the Promise constructor so that it can be overwritten by a different lib like Bluebird
 let p = Promise;

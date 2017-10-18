@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import {
   combineResolvers
-} from '../../src/helper';
+} from '../../dist/helper';
 
 describe('(unit) src/helper.js', () => {
   describe('combineResolvers', () => {

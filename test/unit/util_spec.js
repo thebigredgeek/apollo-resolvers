@@ -5,9 +5,9 @@ import {
   isFunction,
   Promisify,
   isNotNullOrUndefined
-} from '../../src/util';
+} from '../../dist/util';
 
-describe('(unit) src/util.js', () => {
+describe('(unit) dist/util.js', () => {
   describe('isFunction', () => {
     context('when passed a function', () => {
       it('returns true', () => {
