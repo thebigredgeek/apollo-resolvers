@@ -13,7 +13,6 @@ all: clean .PHONY
 
 configure: .PHONY
 	@NODE_ENV= $(PKG) install
-	@touch node_modules
 
 lint: .PHONY
 	eslint src test
