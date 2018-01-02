@@ -4,10 +4,10 @@ import { isFunction, Promisify, isNotNullOrUndefined } from './util';
 
 export const createResolver = (resFn, errFn) => {
   const Promise = getPromise();
-  const baseResolver = (root, args = {}, context = {}) => {
+  const baseResolver = (root, args = {}, context = {}, options = {}) => {
     // Return resolving promise with `null` if the resolver function param is not a function
     if (!isFunction(resFn)) return Promise.resolve(null);
-    return Promisify(resFn)(root, args, context).catch(e => {
+    return Promisify(resFn)(root, args, context, options).catch(e => {
       // On error, check if there is an error handler.  If not, throw the original error
       if (!isFunction(errFn)) throw e;
       // Call the error handler.
@@ -23,14 +23,14 @@ export const createResolver = (resFn, errFn) => {
   baseResolver['createResolver'] = (cResFn, cErrFn) => {
     const Promise = getPromise();
 
-    const childResFn = (root, args, context) => {
+    const childResFn = (root, args, context, options) => {
       // Start with either the parent resolver function or a no-op (returns null)
-      const entry = isFunction(resFn) ? Promisify(resFn)(root, args, context) : Promise.resolve(null);
+      const entry = isFunction(resFn) ? Promisify(resFn)(root, args, context, options) : Promise.resolve(null);
       return entry.then(r => {
         // If the parent returns a value, continue
         if (isNotNullOrUndefined(r)) return r;
         // Call the child resolver function or a no-op (returns null)
-        return isFunction(cResFn) ? Promisify(cResFn)(root, args, context) : Promise.resolve(null);
+        return isFunction(cResFn) ? Promisify(cResFn)(root, args, context, options) : Promise.resolve(null);
       });
     };
 
