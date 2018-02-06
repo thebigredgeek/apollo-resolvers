@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-interface ContextData {
+export interface ContextData {
   models: Object;
   user: Object;
 };

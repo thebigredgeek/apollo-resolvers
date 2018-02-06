@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "Expressive and composable resolvers for Apollostack's GraphQL server Edit",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "make test"
   },
