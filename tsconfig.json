@@ -3,10 +3,10 @@
     "target": "es2015",
     "module": "commonjs",
     "moduleResolution": "node",
+		"declaration": true,
     "sourceMap": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "allowJs": true,
     "outDir": "./dist"
   },
   "include": [
