@@ -1,4 +1,11 @@
 
+1.1.0 / 2018-02-22
+==================
+
+  * Misc: Publish TypeScript declaration in package (#21, @alexstrat)
+  * Misc: TypeScript Refactor (#15, @lakhansamani)
+  * Docs: Update README.md to include GraphQLError import (#14, @michieldewilde)
+
 1.0.3 / 2017-09-07
 ==================
 
