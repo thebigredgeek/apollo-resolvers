@@ -34,7 +34,7 @@ describe('(unit) dist/resolver.js', () => {
         stub(r3, 'handle', r3.handle);
 
         const resolver = createResolver(r1.handle, r1.error).createResolver(r2.handle, r2.error).createResolver(r3.handle, r3.error).createResolver(
-          (root, args, context) => {
+          (root, args, context, info) => {
             throw new Error('first error');
           }
         );
