@@ -45,7 +45,7 @@ export const baseResolver = createResolver(
     Only mask outgoing errors that aren't already apollo-errors,
     such as ORM errors etc
   */
-  (root, args, context, error) => isInstance(error) ? error : new UnknownError()
+  (root, args, context, info, error) => isInstance(error) ? error : new UnknownError()
 );
 ```
 
@@ -129,7 +129,7 @@ const ExposedError = createError('ExposedError', {
 
 const banUser = isAdminResolver.createResolver(
   (root, { input }, { models: { UserModel } }) => UserModel.ban(input),
-  (root, args, context, error) => {
+  (root, args, context, info, error) => {
     /*
       For admin users, let's tell the user what actually broke
       in the case of an unhandled exception
