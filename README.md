@@ -168,6 +168,28 @@ const resolvers = combineResolvers([
 export default resolvers;
 ```
 
+Conditional resovlers:
+```javascript
+import { and, or } from 'apollo-resolvers';
+
+import isFooResolver from './foo';
+import isBarResolver from './bar';
+
+const banResolver = (root, { input }, { models: { UserModel } })=> UserModel.ban(input);
+
+// Will execute banResolver if either isFooResolver or isBarResolver successfully resolve
+// If none of the resolvers succeed, the error from the last conditional resolver will
+// be returned
+const orBanResolver = or(isFooResolver, isBarResolver)(banResolver);
+
+// Will execute banResolver if both isFooResolver and isBarResolver successfully resolve
+// If one of the condition resolvers throws an error, it will stop the execution and
+// return the error
+const andBanResolver = and(isFooResolver, isBarResolver)(banResolver);
+
+// In both cases, conditions are evaluated from left to right
+```
+
 ## Resolver context
 
 Resolvers are provided a mutable context object that is shared between all resolvers for a given request.  A common pattern with GraphQL is inject request-specific model instances into the resolver context for each request.  Models frequently reference one another, and unbinding circular references can be a pain.  `apollo-resolvers` provides a request context factory that allows you to bind context disposal to server responses, calling a `dispose` method on each model instance attached to the context to do any sort of required reference cleanup necessary to avoid memory leaks:
