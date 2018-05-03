@@ -4,12 +4,16 @@ import * as merge from "deepmerge";
 export const combineResolvers = (resolvers = []) => resolvers
   .reduce((combined, resolver) => merge(combined, resolver));
 
+// Accepts multiple authentication resolvers and returns a function which will be called
+// if all of the authentication resolvers succeed, or throw an error if one of them fails
 export const and = (...conditions) => resolver => {
   return conditions.reduceRight((p, c) => {
     return c.createResolver(p);
   }, resolver)
 }
 
+// Accepts multiple authentication resolvers and returns a function which will be called
+// if any of the authentication resolvers succeed, or throw an error if all of them fail
 export const or = (...conditions) => resolver => (...query) => {
   return new Promise((resolve, reject) => {
     let limit = conditions.length - 1;
