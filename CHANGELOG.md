@@ -1,4 +1,9 @@
 
+1.2.0 / 2018-05-08
+==================
+
+  * Feature: Functional helpers for conditional resolvers (#25, @rynobax)
+
 1.1.0 / 2018-02-22
 ==================
 

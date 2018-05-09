@@ -4,11 +4,15 @@ const merge = require("deepmerge");
 // Helper function to combine multiple resolver definition hashes into a single hash for consumption by Apollostack's graphql-server
 exports.combineResolvers = (resolvers = []) => resolvers
     .reduce((combined, resolver) => merge(combined, resolver));
+// Accepts multiple authentication resolvers and returns a function which will be called
+// if all of the authentication resolvers succeed, or throw an error if one of them fails
 exports.and = (...conditions) => resolver => {
     return conditions.reduceRight((p, c) => {
         return c.createResolver(p);
     }, resolver);
 };
+// Accepts multiple authentication resolvers and returns a function which will be called
+// if any of the authentication resolvers succeed, or throw an error if all of them fail
 exports.or = (...conditions) => resolver => (...query) => {
     return new Promise((resolve, reject) => {
         let limit = conditions.length - 1;

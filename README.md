@@ -168,7 +168,7 @@ const resolvers = combineResolvers([
 export default resolvers;
 ```
 
-Conditional resovlers:
+Conditional resolvers:
 ```javascript
 import { and, or } from 'apollo-resolvers';
 
