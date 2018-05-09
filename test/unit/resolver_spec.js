@@ -141,4 +141,49 @@ describe('(unit) dist/resolver.js', () => {
       });
     })
   });
+  describe('info parameter', () => {
+    it('info parameter should be an empty object', () => {
+      const r1 = {
+        handle: (root, args, context, info) => {
+          expect(typeof info).to.equal('object')
+          expect(Object.keys(info).length).to.equal(0)
+        },
+      };
+      const resolver = createResolver(r1.handle);
+
+      resolver(null, null, null)
+    })
+    it('should pass the info parameter', () => {
+      const r1 = {
+        handle: (root, args, context, info) => {
+          expect(typeof info).to.equal('object')
+          expect(info.info).to.equal('info')
+        },
+      };
+      const resolver = createResolver(r1.handle);
+
+      resolver(null, null, null, { info: 'info' })
+    })
+    it('should pass the info parameter on a chained resolver', () => {
+      const r1 = {
+        handle: (root, args, context, info) => {
+          expect(typeof info).to.equal('object')
+          expect(info.info).to.equal('info')
+        },
+      };
+
+      const r2 = {
+        handle: (root, args, context, info) => {
+          expect(typeof info).to.equal('object')
+          expect(info.chained).to.equal('info')
+        },
+      };
+
+      const baseResolver = createResolver(r1.handle);
+      const chainedResolver = createResolver(r2.handle)
+
+      baseResolver(null, null, null, { info: 'info' })
+      chainedResolver(null, null, null, { chained: 'info' })
+    })
+  })
 });
