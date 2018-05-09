@@ -1,1 +1,1 @@
-export declare const createResolver: (resFn: any, errFn: any) => (root: any, args?: {}, context?: {}) => Promise<any>;
+export declare const createResolver: (resFn: any, errFn: any) => (root: any, args?: {}, context?: {}, info?: {}) => Promise<any>;
