@@ -1,4 +1,9 @@
 
+1.3.0 / 2018-05-12
+==================
+
+  * Feature: Expo info parameter on resolvers (#28, @Corjen)
+
 1.2.0 / 2018-05-08
 ==================
 
