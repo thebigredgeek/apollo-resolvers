@@ -65,14 +65,14 @@ const AuthenticationRequiredError = createError('AuthenticationRequiredError', {
 
 export const isAuthenticatedResolver = baseResolver.createResolver(
   // Extract the user from context (undefined if non-existent)
-  (root, args, { user }) => {
+  (root, args, { user }, info) => {
     if (!user) throw new AuthenticationRequiredError();
   }
 );
 
 export const isAdminResolver = isAuthenticatedResolver.createResolver(
   // Extract the user and make sure they are an admin
-  (root, args, { user }) => {
+  (root, args, { user }, info) => {
     /*
       If thrown, this error will bubble up to baseResolver's
       error callback (if present).  If unhandled, the error is returned to
@@ -100,7 +100,7 @@ const NotYourUserError = createError('NotYourUserError', {
 });
 
 const updateMyProfile = isAuthenticatedResolver.createResolver(
-  (root, { input }, { user, models: { UserModel } }) => {
+  (root, { input }, { user, models: { UserModel } }, info) => {
     /*
       If thrown, this error will bubble up to isAuthenticatedResolver's error callback
       (if present) and then to baseResolver's error callback.  If unhandled, the error
@@ -128,7 +128,7 @@ const ExposedError = createError('ExposedError', {
 });
 
 const banUser = isAdminResolver.createResolver(
-  (root, { input }, { models: { UserModel } }) => UserModel.ban(input),
+  (root, { input }, { models: { UserModel } }, info) => UserModel.ban(input),
   (root, args, context, error) => {
     /*
       For admin users, let's tell the user what actually broke
@@ -175,7 +175,7 @@ import { and, or } from 'apollo-resolvers';
 import isFooResolver from './foo';
 import isBarResolver from './bar';
 
-const banResolver = (root, { input }, { models: { UserModel } })=> UserModel.ban(input);
+const banResolver = (root, { input }, { models: { UserModel } }, info)=> UserModel.ban(input);
 
 // Will execute banResolver if either isFooResolver or isBarResolver successfully resolve
 // If none of the resolvers succeed, the error from the last conditional resolver will
