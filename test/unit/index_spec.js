@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import {
-  combineResolvers
+  combineResolvers, and, or
 } from '../../dist/helper';
 
 import {
@@ -24,7 +24,9 @@ describe('(unit) dist/index.js', () => {
       combineResolvers,
       usePromise,
       createExpressContext,
-      createResolver
+      createResolver,
+      and,
+      or
     });
   })
 })
