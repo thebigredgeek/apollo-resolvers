@@ -323,13 +323,15 @@ describe('(unit) src/helper.js', () => {
       const comp = base.compose({
         r1: { resolve: () => { throw Error('some other error') }, error: () => compositionErr },
         r2: { resolve: () => 'r2Result', error: () => compositionErr },
-        r3: {} // should this throw an exception since it is not a resolver or createResolver params?
+        r3: {} // should we throw an exception since it is not a resolver or createResolver params?
       });
 
-      console.log(typeof Function);
-      expect(comp.r1).to.be.a(typeof Function);
-      expect(comp.r2).to.be.a(typeof Function);
-      expect(comp.r3).to.be.a(typeof Function);
+      const composed = { r0: () => {}, ...comp };
+
+      expect(composed.r0).to.be.a(typeof Function);
+      expect(composed.r1).to.be.a(typeof Function);
+      expect(composed.r2).to.be.a(typeof Function);
+      expect(composed.r3).to.be.a(typeof Function);
 
     });
 
