@@ -1,6 +1,6 @@
 import { getPromise } from './promise';
 
-export const isFunction = fn => typeof fn === 'function';
+export const isFunction = fn => typeof fn === 'function' || fn instanceof Function;
 
 export const Promisify = fn => {
   const Promise = getPromise();

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const promise_1 = require("./promise");
 const util_1 = require("./util");
+const Promise = promise_1.getPromise();
 exports.createResolver = (resFn, errFn) => {
     const Promise = promise_1.getPromise();
     const baseResolver = (root, args = {}, context = {}, info = {}) => {
@@ -22,7 +23,7 @@ exports.createResolver = (resFn, errFn) => {
             });
         });
     };
-    baseResolver['createResolver'] = (cResFn, cErrFn) => {
+    baseResolver.createResolver = (cResFn, cErrFn) => {
         const Promise = promise_1.getPromise();
         const childResFn = (root, args, context, info = {}) => {
             // Start with either the parent resolver function or a no-op (returns null)
