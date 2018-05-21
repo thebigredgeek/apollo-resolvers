@@ -1,10 +1,24 @@
 import { getPromise } from './promise';
 import { isFunction, Promisify, isNotNullOrUndefined } from './util';
 
+const Promise = getPromise();
 
-export const createResolver = (resFn, errFn) => {
+export interface ResultFunction<ResulType> {
+  (root, args, context, info): Promise<ResulType> | ResulType | void
+}
+
+export interface ErrorFunction<ErrorType> {
+  (root, args, context, err): ErrorType | void
+}
+
+export interface Resolver<ResulType> {
+  (root, args: {}, context: {}, info: {}): Promise<ResulType>
+  createResolver?: <R, E>(resFn: ResultFunction<R>, errFn?: ErrorFunction<E>) => Resolver<R>
+}
+
+export const createResolver = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
   const Promise = getPromise();
-  const baseResolver = (root, args = {}, context = {}, info = {}) => {
+  const baseResolver: Resolver<R> = (root, args = {}, context = {}, info = {}) => {
     // Return resolving promise with `null` if the resolver function param is not a function
     if (!isFunction(resFn)) return Promise.resolve(null);
     return Promisify(resFn)(root, args, context, info).catch(e => {
@@ -20,7 +34,7 @@ export const createResolver = (resFn, errFn) => {
       });
     });
   };
-  baseResolver['createResolver'] = (cResFn, cErrFn) => {
+  baseResolver.createResolver = (cResFn, cErrFn) => {
     const Promise = getPromise();
 
     const childResFn = (root, args, context, info = {}) => {
