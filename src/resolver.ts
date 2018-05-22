@@ -11,12 +11,16 @@ export interface ErrorFunction<ErrorType> {
   (root, args, context, err): ErrorType | void
 }
 
-export interface Resolver<ResulType> {
-  (root, args: {}, context: {}, info: {}): Promise<ResulType>
-  createResolver?: <R, E>(resFn: ResultFunction<R>, errFn?: ErrorFunction<E>) => Resolver<R>
+export interface CreateResolverFunction {
+  <R, E>(resFn: ResultFunction<R>, errFn?: ErrorFunction<E>): Resolver<R>
 }
 
-export const createResolver = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
+export interface Resolver<ResulType> {
+  (root, args: {}, context: {}, info: {}): Promise<ResulType>
+  createResolver?: CreateResolverFunction
+}
+
+export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
   const Promise = getPromise();
   const baseResolver: Resolver<R> = (root, args = {}, context = {}, info = {}) => {
     // Return resolving promise with `null` if the resolver function param is not a function
