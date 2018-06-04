@@ -185,5 +185,16 @@ describe('(unit) dist/resolver.js', () => {
       baseResolver(null, null, null, { info: 'info' })
       chainedResolver(null, null, null, { chained: 'info' })
     })
+    it('should pass the info parameter to child resolvers', () => {
+      const childHandle = (root, args, context, info) => {
+        expect(typeof info).to.equal('object')
+        expect(info.info).to.equal('info')
+      };
+
+      const baseResolver = createResolver();
+      const childResolver = baseResolver.createResolver(childHandle)
+
+      childResolver(null, null, null, { info: 'info' })
+    })
   })
 });
