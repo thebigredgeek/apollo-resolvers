@@ -48,7 +48,7 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
         // If the parent returns a value, continue
         if (isNotNullOrUndefined(r)) return r;
         // Call the child resolver function or a no-op (returns null)
-        return isFunction(cResFn) ? Promisify(cResFn)(root, args, context) : Promise.resolve(null);
+        return isFunction(cResFn) ? Promisify(cResFn)(root, args, context, info) : Promise.resolve(null);
       });
     };
 
