@@ -38,3 +38,6 @@ jspm_packages
 
 # Yarn
 yarn.lock
+
+# Build
+dist
