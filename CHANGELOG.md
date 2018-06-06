@@ -1,4 +1,11 @@
 
+1.3.1 / 2018-06-06
+==================
+
+  * Fix: Pass info param to child resolvers (#34, @happylinks)
+  * Fix: Export `and` and `or` operators (#29, @mringer)
+  * Misc: Add better types and generics to define resolvers (#33, @theGlenn)
+
 1.3.0 / 2018-05-12
 ==================
 
