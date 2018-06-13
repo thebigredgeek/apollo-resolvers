@@ -2,9 +2,10 @@ import { expect } from 'chai';
 import { stub } from 'sinon';
 
 import {
-  combineResolvers, and, or,
+  combineResolvers, and, or, compose, Composable
 } from '../../dist/helper';
 import { createResolver } from '../../dist/resolver';
+import { resolveAll } from 'jspm-config';
 
 describe('(unit) src/helper.js', () => {
   describe('combineResolvers', () => {
@@ -171,6 +172,102 @@ describe('(unit) src/helper.js', () => {
           expect(r1.handle.calledOnce).to.be.true;
         });
       });
+    });
+
+  });
+
+  describe('Compose resolvers', () => {
+    const compositionErr = new Error('composition error');
+    const successResolver = createResolver(() => null, () => null);
+    const failureResolver = createResolver(() => { throw compositionErr; }, () => null);
+
+    it('composed resolvers are chained, and base resolver is called for each', () => {
+
+      const b = {
+        resolve: () => {},
+        error: d => compositionErr
+      };
+
+      stub(b, 'resolve', b.resolve);
+      
+      const base = new Composable(b.resolve, b.error);
+      const comp = base.compose({ 
+        r1: () => true,
+        r2: () => true,
+        r3: () => true,
+       });
+
+      return Promise.all([
+
+        comp.r1().then(r => {
+          expect(b.resolve.calledThrice).to.be.true;
+          expect(r).to.be.true;
+        }),
+
+        comp.r2().then(r => {
+          expect(b.resolve.calledThrice).to.be.true;
+          expect(r).to.be.true;
+        }),
+
+        comp.r3().then(r => {
+          expect(r).to.be.true;
+          expect(b.resolve.calledThrice).to.be.true;
+        })
+
+      ]);
+    });
+
+    it('when base throws, child is not called ', () => {
+      
+      const b = {
+        resolve: null,
+        error: d => compositionErr
+      };
+
+      const r1 = { 
+        resolve: () => true,
+        error: () => compositionErr
+      };
+      
+      stub(b, 'error', b.error);
+      stub(r1, 'error', r1.error);
+
+      const base = new Composable(b.resolve, b.error);
+      const comp = base.compose( { r1: r1 } );
+
+      comp.r1()
+        .catch( e => {
+          expect(b.error.calledOnce).to.be.true;
+          expect(r1.resolve.notCalled).to.be.true;
+          expect(r1.error.notCalled).to.be.true;
+          expect(e).to.equal(compositionErr);
+        });
+    });
+
+    it('when child throws, parent error is called ', () => {
+      
+      const b = {
+        resolve: null,
+        error: d => null
+      };
+
+      const r1 = { 
+        resolve: () => true,
+        error: () => compositionErr
+      };
+      
+      stub(b, 'error', b.error);
+      stub(r1, 'error', r1.error);
+
+      const base = new Composable(b.resolve, b.error);
+      const comp = base.compose( { r1: r1 } );
+
+      comp.r1()
+        .catch( e => {
+          expect(b.error.calledOnce).to.be.true;
+          expect(r1.error.calledOnce).to.be.true;
+          expect(e).to.equal(compositionErr);
+        });
     });
 
   });
