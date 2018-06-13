@@ -1,4 +1,4 @@
-import { createResolver } from "./resolver";
+import { createResolver, ResultFunction, ErrorFunction, Resolver } from "./resolver";
 import * as merge from "deepmerge";
 import { isFunction } from "./util";
 
@@ -41,21 +41,21 @@ export const or = (...conditions) => resolver => (...query) => {
  * @param errFn: error handler
  * @returns resolverFn: { createResolver(resFn, errFn), compose({ resolvers }): { composed resolvers } ...}
  */
-export const composable  = (resFn, errFn) => {
-  const baseResolver = createResolver(resFn, errFn);
+// export const composable = <R,E>(resFn: ResultFunction<R>, errFn:  ErrorFunction<E>) => {
+//   const baseResolver = createResolver(resFn, errFn);
 
-  baseResolver['compose'] = ( resolvers: {} ) => {
-    const composed = {};
-    Object.keys(resolvers).forEach(key => {
-      const resolver = resolvers[key];
-      composed[key] = (resolver.resolve || resolver.error)
-        // supports syntax: compose( { myResolver: { resolve: resFn, error: errFn } } )
-        ? baseResolver['createResolver'](resolver.resolve, resolver.error)
-        // suports syntax: compose( { myResolver: resolver } )
-        : baseResolver['createResolver'](resolver);
-    });
-    return composed;
-  }
+//   baseResolver['compose'] = ( resolvers: {} ) => {
+//     const composed = {};
+//     Object.keys(resolvers).forEach(key => {
+//       const _resolver = resolvers[key];
+//       composed[key] = (_resolver.resolve || _resolver.error)
+//         // supports syntax: compose( { myResolver: { resolve: resFn, error: errFn } } )
+//         ? baseResolver.createResolver(_resolver.resolve, _resolver.error)
+//         // supports syntax: compose( { myResolver: resolver } )
+//         : baseResolver.createResolver(_resolver);
+//     });
+//     return composed;
+//   }
 
-  return baseResolver;
-}
+//   return baseResolver;
+// }
