@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { stub } from 'sinon';
 
 import {
-  combineResolvers, and, or, compose, Composable
+  combineResolvers, and, or, compose, composable
 } from '../../dist/helper';
 import { createResolver } from '../../dist/resolver';
 import { resolveAll } from 'jspm-config';
@@ -190,7 +190,7 @@ describe('(unit) src/helper.js', () => {
 
       stub(b, 'resolve', b.resolve);
       
-      const base = new Composable(b.resolve, b.error);
+      const base = composable(b.resolve, b.error);
       const comp = base.compose({ 
         r1: () => true,
         r2: () => true,
@@ -232,7 +232,7 @@ describe('(unit) src/helper.js', () => {
       stub(b, 'error', b.error);
       stub(r1, 'error', r1.error);
 
-      const base = new Composable(b.resolve, b.error);
+      const base = composable(b.resolve, b.error);
       const comp = base.compose( { r1: r1 } );
 
       comp.r1()
@@ -245,7 +245,6 @@ describe('(unit) src/helper.js', () => {
     });
 
     it('when child throws, parent error is called ', () => {
-      
       const b = {
         resolve: null,
         error: d => null
@@ -259,7 +258,7 @@ describe('(unit) src/helper.js', () => {
       stub(b, 'error', b.error);
       stub(r1, 'error', r1.error);
 
-      const base = new Composable(b.resolve, b.error);
+      const base = composable(b.resolve, b.error);
       const comp = base.compose( { r1: r1 } );
 
       comp.r1()
@@ -268,6 +267,70 @@ describe('(unit) src/helper.js', () => {
           expect(r1.error.calledOnce).to.be.true;
           expect(e).to.equal(compositionErr);
         });
+    });
+
+    it('composed resolvers with { resolve: resFn, error: resFn } syntax, resolve and bubble errors correctly', () => {
+
+      const b = {
+        resolve: () => {},
+        error: d => compositionErr
+      };
+
+      const r1 = { 
+        resolve: () => { throw Error('some other error') },
+        error: () => compositionErr };
+
+      const r2 = { resolve: () => 'r2Result', error: () => compositionErr };
+      
+      stub(b, 'resolve', b.resolve);
+      stub(r1, 'error', r1.error);
+      stub(r1, 'resolve', r1.resolve);
+      stub(r2, 'resolve', r2.resolve);
+      stub(r2, 'error', r2.error);
+      
+      const base = composable(b.resolve, b.error);
+      const comp = base.compose({ 
+        r1: r1,
+        r2: r2,
+       });
+
+      return Promise.all([
+        comp.r1().catch(e => {
+          expect(e).to.equal(compositionErr);
+        }),
+        comp.r2().then(r => {
+          expect(r).to.equal('r2Result');
+        }),
+
+      ]).then(()=> {
+        expect(r1.resolve.calledOnce).to.be.true;
+        expect(r1.error.calledOnce).to.be.true;
+        expect(r2.resolve.calledOnce).to.be.true;
+        expect(r2.error.notCalled).to.be.true;
+      });
+    });
+
+    it('composed result has correct structure', () => {
+
+      const b = {
+        resolve: () => {},
+        error: d => compositionErr
+      };
+
+      stub(b, 'resolve', b.resolve);
+      
+      const base = composable(b.resolve, b.error);
+      const comp = base.compose({
+        r1: { resolve: () => { throw Error('some other error') }, error: () => compositionErr },
+        r2: { resolve: () => 'r2Result', error: () => compositionErr },
+        r3: {} // should this throw an exception since it is not a resolver or createResolver params?
+      });
+
+      console.log(typeof Function);
+      expect(comp.r1).to.be.a(typeof Function);
+      expect(comp.r2).to.be.a(typeof Function);
+      expect(comp.r3).to.be.a(typeof Function);
+
     });
 
   });

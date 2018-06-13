@@ -30,34 +30,28 @@ export const or = (...conditions) => resolver => (...query) => {
   });
 }
 
-export class Composable {
-  resolver: any; // stricter types won't pass the compiler because createResolver is unexpected on Funciton.
+/**
+ * Constructs a composable resolver with the same arguments as createResolver.
+ * The composable resolver provides the compose method which takes an object of named resolver functions.
+ * @param resFn resolver function
+ * @param errFn error handler
+ */
+export const composable  = (resFn, errFn) => {
+  const baseResolver = createResolver(resFn, errFn);
 
-  /**
-   * 
-   * @param resolver 
-   * TODO: a Resolver type is probably needed, but outside the scope of this PR because it requires refactoring resolver.ts
-   */
-  constructor(resFn, errFn) {
-    this.resolver = createResolver(resFn, errFn);
-  }
-
-  /**
-   * 
-   * @param resolvers 
-   */
-  public compose( resolvers: {} ) {
+  baseResolver['compose'] = ( resolvers: {} ) => {
     const composed = {};
-
     Object.keys(resolvers).forEach(key => {
       const resolver = resolvers[key];
-
-      composed[key] = (resolver.resolve || resolver.error) 
-        ? this.resolver.createResolver(resolver.resolve, resolver.error)
-        : this.resolver.createResolver(resolver);
+      // composed[key] = baseResolver['createResolver'](resolver);
+      composed[key] = (resolver.resolve || resolver.error)
+        // supports syntax: compose( { myResolver: { resolve: resFn, error: errFn } } )
+        ? baseResolver['createResolver'](resolver.resolve, resolver.error)
+        // suports syntax: compose( { myResolver: resolver } )
+        : baseResolver['createResolver'](resolver);
     });
-
     return composed;
   }
 
+  return baseResolver;
 }
