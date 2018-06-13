@@ -33,8 +33,13 @@ export const or = (...conditions) => resolver => (...query) => {
 /**
  * Constructs a composable resolver with the same arguments as createResolver.
  * The composable resolver provides the compose method which takes an object of named resolver functions.
- * @param resFn resolver function
- * @param errFn error handler
+ * The resolvers object can contain, constructed resolver functions or { resolve: fn, error: fn } params 
+ * to construct a new resolver. Compose returns an object of resolvers who inherit from the baseResolver
+ * on which compose was called.
+ * 
+ * @param resFn: resolver function
+ * @param errFn: error handler
+ * @returns resolverFn: { createResolver(resFn, errFn), compose({ resolvers }): { composed resolvers } ...}
  */
 export const composable  = (resFn, errFn) => {
   const baseResolver = createResolver(resFn, errFn);
@@ -43,7 +48,6 @@ export const composable  = (resFn, errFn) => {
     const composed = {};
     Object.keys(resolvers).forEach(key => {
       const resolver = resolvers[key];
-      // composed[key] = baseResolver['createResolver'](resolver);
       composed[key] = (resolver.resolve || resolver.error)
         // supports syntax: compose( { myResolver: { resolve: resFn, error: errFn } } )
         ? baseResolver['createResolver'](resolver.resolve, resolver.error)
