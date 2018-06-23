@@ -1,4 +1,6 @@
+import { createResolver, ResultFunction, ErrorFunction, Resolver } from "./resolver";
 import * as merge from "deepmerge";
+import { isFunction } from "./util";
 
 // Helper function to combine multiple resolver definition hashes into a single hash for consumption by Apollostack's graphql-server
 export const combineResolvers = (resolvers = []) => resolvers
@@ -27,3 +29,4 @@ export const or = (...conditions) => resolver => (...query) => {
     attempt(0);
   });
 }
+

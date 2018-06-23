@@ -15,9 +15,14 @@ export interface CreateResolverFunction {
   <R, E>(resFn: ResultFunction<R>, errFn?: ErrorFunction<E>): Resolver<R>
 }
 
+export interface ComposeResolversFunction {
+  ( resolvers: any ): {} // { [name: string]: Resolver<R> | {} }
+}
+
 export interface Resolver<ResulType> {
   (root, args: {}, context: {}, info: {}): Promise<ResulType>
   createResolver?: CreateResolverFunction
+  compose?: ComposeResolversFunction
 }
 
 export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
@@ -38,6 +43,7 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
       });
     });
   };
+
   baseResolver.createResolver = (cResFn, cErrFn) => {
     const Promise = getPromise();
 
@@ -72,6 +78,19 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
 
     // Create the child resolver and return it
     return createResolver(childResFn, childErrFn);
+  }
+
+  baseResolver.compose = ( resolvers: {} ) => {
+    const composed = {};
+    Object.keys(resolvers).forEach(key => {
+      const _resolver = resolvers[key];
+      composed[key] = (_resolver.resolve || _resolver.error)
+        // supports syntax: compose( { myResolver: { resolve: resFn, error: errFn } } )
+        ? baseResolver.createResolver(_resolver.resolve, _resolver.error)
+        // supports syntax: compose( { myResolver: resolver } )
+        : baseResolver.createResolver(_resolver);
+    });
+    return composed;
   }
 
   return baseResolver;

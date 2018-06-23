@@ -2,9 +2,10 @@ import { expect } from 'chai';
 import { stub } from 'sinon';
 
 import {
-  combineResolvers, and, or,
+  combineResolvers, and, or, compose, composable
 } from '../../dist/helper';
 import { createResolver } from '../../dist/resolver';
+import { resolveAll } from 'jspm-config';
 
 describe('(unit) src/helper.js', () => {
   describe('combineResolvers', () => {

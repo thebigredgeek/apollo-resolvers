@@ -1,4 +1,5 @@
 {
-  "presets": ["es2015"],
-  "sourceMaps": true
+  "presets": ["env"],
+  "sourceMaps": true,
+  "plugins": ["transform-object-rest-spread"]
 }
