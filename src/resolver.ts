@@ -12,7 +12,7 @@ export interface ErrorFunction<ErrorType> {
 }
 
 export interface CreateResolverFunction {
-  <R, E>(resFn: ResultFunction<R>, errFn?: ErrorFunction<E>): Resolver<R>
+  <R, E>(resFn: ResultFunction<R> | null, errFn?: ErrorFunction<E>): Resolver<R>
 }
 
 export interface ComposeResolversFunction {
@@ -21,13 +21,13 @@ export interface ComposeResolversFunction {
 
 export interface Resolver<ResulType> {
   (root, args: {}, context: {}, info: {}): Promise<ResulType>
-  createResolver?: CreateResolverFunction
-  compose?: ComposeResolversFunction
+  createResolver: CreateResolverFunction
+  compose: ComposeResolversFunction
 }
 
 export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
   const Promise = getPromise();
-  const baseResolver: Resolver<R> = (root, args = {}, context = {}, info = {}) => {
+  const baseResolver: Resolver<R> = ((root, args = {}, context = {}, info = {}) => {
     // Return resolving promise with `null` if the resolver function param is not a function
     if (!isFunction(resFn)) return Promise.resolve(null);
     return Promisify(resFn)(root, args, context, info).catch(e => {
@@ -42,7 +42,7 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
         throw parsedError || e
       });
     });
-  };
+  }) as any;
 
   baseResolver.createResolver = (cResFn, cErrFn) => {
     const Promise = getPromise();

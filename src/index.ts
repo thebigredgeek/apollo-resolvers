@@ -1,7 +1,7 @@
 import { usePromise } from './promise';
 import { combineResolvers, and, or } from './helper';
 import { createExpressContext } from './context';
-import { createResolver } from './resolver';
+import { createResolver, Resolver, CreateResolverFunction } from './resolver';
 
 export {
   usePromise,
@@ -9,5 +9,7 @@ export {
   createExpressContext,
   createResolver,
   and,
-  or
+  or,
+  Resolver,
+  CreateResolverFunction,
 };
