@@ -1,4 +1,11 @@
 
+1.4.0 / 2018-07-22
+==================
+
+  * Feature: Implement compose helper (#31, @mringer) 
+  * Misc: Replace babel-preset-es2015 with babel-preset-env 
+  * Misc: Improve typescript definitions (#36, doomsower)
+
 1.3.1 / 2018-06-06
 ==================
 
