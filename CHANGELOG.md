@@ -1,5 +1,5 @@
 
-1.4.0 / 2018-07-22
+1.4.1 / 2018-07-22
 ==================
 
   * Feature: Implement compose helper (#31, @mringer) 
