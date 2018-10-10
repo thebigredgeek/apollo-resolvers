@@ -15,8 +15,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
-            - npm-lock-master-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
+            - npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
+            - npm-lock-master-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
             - npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
             - npm-cache-master-{{ .Environment.CIRCLE_JOB }}
       - run:
@@ -29,11 +29,11 @@ jobs:
           name: Test
           command: npm run test
       - save_cache:
-          key: npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
+          key: npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
           paths:
             - node_modules
       - save_cache:
-          key: npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm/_cacache
   node-v6:
