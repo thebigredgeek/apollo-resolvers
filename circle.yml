@@ -1,43 +1,50 @@
+workflows:
+  version: 2
+  node-multi-build:
+    jobs:
+      - node-v6
+      - node-v8
+      - node-v10
+
 version: 2
 jobs:
-  build:
-    working_directory: ~/apollo-resolvers
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+  node-base: &node-base
     docker:
-    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
+      - image: node
     steps:
-    - checkout
-    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-    - run:
-        working_directory: ~/apollo-resolvers
-        command: nvm install 5.5.0 && nvm alias default 5.5.0
-    # Dependencies
-    # Restore the dependency cache
-    - restore_cache:
-        keys:
-        - v1-dep-{{ .Branch }}-
-        - v1-dep-master-
-        - v1-dep-
-    - run: make configure
-    # Save dependency cache
-    - save_cache:
-        key: v1-dep-{{ .Branch }}-{{ epoch }}
-        paths:
-        - ./node_modules
-    - run: make lint
-    - run: make
-    - run: make test
-    # Teardown
-    # Save test results
-    - store_test_results:
-        path: /tmp/circleci-test-results
-    # Save artifacts
-    - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
+            - npm-lock-master-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
+            - npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
+            - npm-cache-master-{{ .Environment.CIRCLE_JOB }}
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Build
+          command: npm run build
+      - run:
+          name: Test
+          command: npm run test
+      - save_cache:
+          key: npm-lock-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - save_cache:
+          key: npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm/_cacache
+  node-v6:
+    <<: *node-base
+    docker:
+      - image: node:6
+  node-v8:
+    <<: *node-base
+    docker:
+      - image: node:8
+  node-v10:
+    <<: *node-base
+    docker:
+      - image: node:10
