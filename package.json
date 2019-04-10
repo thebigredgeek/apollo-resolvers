@@ -5,7 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "make test"
+    "test": "mocha",
+    "build": "tsc",
+    "lint": "eslint src test",
+    "clean": "rimraf test"
   },
   "repository": {
     "type": "git",
