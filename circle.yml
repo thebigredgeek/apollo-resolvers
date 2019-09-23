@@ -5,7 +5,7 @@ workflows:
       - node-v6
       - node-v8
       - node-v10
-
+      - node-v12
 version: 2
 jobs:
   node-base: &node-base
@@ -48,3 +48,7 @@ jobs:
     <<: *node-base
     docker:
       - image: node:10
+  node-v12:
+    <<: *node-base
+    docker:
+      - image: node:12
