@@ -1,3 +1,7 @@
+1.4.2 / 2020-03-04
+==================
+* Fix: Fixed `or` resolver (#47, @klymenko-serhii)
+* Misc: Various CI/CD fixes (@thebigredgeek)
 
 1.4.1 / 2018-07-22
 ==================
