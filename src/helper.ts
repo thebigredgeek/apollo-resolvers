@@ -16,12 +16,16 @@ export const and = (...conditions) => resolver => {
 
 // Accepts multiple authentication resolvers and returns a function which will be called
 // if any of the authentication resolvers succeed, or throw an error if all of them fail
-export const or = (...conditions) => resolver => (...query) => {
+export const or = (...conditions) => resolver => (root, args, context, info) => {
   return new Promise((resolve, reject) => {
     let limit = conditions.length - 1;
     const attempt = (i) =>
-      conditions[i].createResolver(resolver)(...query)
-        .then(res => resolve(res))
+      createResolver(conditions[i])(root, args, context, info)
+        .then(() => {
+          createResolver(resolver)(root, args, context, info)
+            .then(res => resolve(res))
+            .catch(err => reject(err));
+        })
         .catch(err => {
           if(i === limit) reject(err);
           else attempt(i + 1);
