@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import Bluebird from 'bluebird';
 
 import {
   usePromise
@@ -7,6 +8,16 @@ import {
 describe('(unit) dist/promise.js', () => {
   after(() => usePromise(Promise));
   describe('usePromise', () => {
+    context('with Bluebird', () => {
+      it('does not throw', () => {
+        usePromise(Bluebird);
+      });
+    });
+    context('with ES6 Promise', () => {
+      it('does not throw', () => {
+        usePromise(Promise);
+      });
+    });
     context('with another valid promise lib', () => {
       it('does not throw', () => {
         class FakePromiseLib {

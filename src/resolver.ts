@@ -1,8 +1,6 @@
 import { getPromise } from './promise';
 import { isFunction, Promisify, isNotNullOrUndefined } from './util';
 
-const Promise = getPromise();
-
 export interface ResultFunction<ResulType> {
   (root, args, context, info): Promise<ResulType> | ResulType | void
 }

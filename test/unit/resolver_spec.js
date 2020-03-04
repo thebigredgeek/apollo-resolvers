@@ -1,11 +1,7 @@
 import { expect } from 'chai';
 import { stub } from 'sinon';
-import Bluebird from 'bluebird';
 
 import { createResolver } from '../../dist/resolver';
-import { usePromise } from '../../dist/promise';
-
-let originalPromise = Promise;
 
 describe('(unit) dist/resolver.js', () => {
   describe('createResolver', () => {
