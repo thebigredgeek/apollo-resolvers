@@ -1,10 +1,11 @@
 import * as assert from 'assert';
+import Bluebird from 'bluebird';
 
 // Expose the Promise constructor so that it can be overwritten by a different lib like Bluebird
 let p = Promise;
 
 // Allow overload with compliant promise lib
-export const usePromise = pLib => {
+export const usePromise = (pLib: PromiseLike<any> | Promise<any> | Bluebird): void => {
   assert(pLib && pLib.prototype, 'apollo-errors#usePromise expects a valid Promise library');
   assert(!!pLib.resolve, 'apollo-errors#usePromise expects a Promise library that implements static method "Promise.resolve"');
   assert(!!pLib.reject, 'apollo-errors#usePromise expects a Promise library that implements static method "Promise.reject"');
@@ -15,4 +16,4 @@ export const usePromise = pLib => {
 };
 
 // Return the currently selected promise lib
-export const getPromise = () => p;
+export const getPromise = (): PromiseLike<any> | Promise<any> | Bluebird => p;

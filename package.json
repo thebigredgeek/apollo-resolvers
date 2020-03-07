@@ -7,7 +7,7 @@
   "scripts": {
     "test": "mocha",
     "build": "tsc",
-    "lint": "eslint src test",
+    "lint": "eslint src/**/*.ts test/**/*.ts",
     "clean": "rimraf dist"
   },
   "repository": {
@@ -23,9 +23,6 @@
     "api"
   ],
   "author": "Andrew E. Rhyne",
-  "contributors": [
-    "Zach Tratar <ztratar@gmail.com"
-  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/thebigredgeek/apollo-resolvers/issues"
@@ -36,10 +33,11 @@
     "deepmerge": "^3.0.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
     "bluebird": "3.5.4",
     "chai": "3.5.0",
-    "eslint": "3.19.0",
-    "eslint-plugin-babel": "3.3.0",
+    "eslint": "^6.8.0",
     "express": "4.16.4",
     "graphql-server-express": "0.6.0",
     "jest": "^25.1.0",
@@ -47,7 +45,6 @@
     "rimraf": "2.6.3",
     "sinon": "1.17.7",
     "supertest": "3.4.2",
-    "typescript": "2.9.2",
-    "typings": "2.1.1"
+    "typescript": "^3.8.3"
   }
 }

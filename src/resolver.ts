@@ -2,30 +2,33 @@ import { getPromise } from './promise';
 import { isFunction, Promisify, isNotNullOrUndefined } from './util';
 
 export interface ResultFunction<ResulType> {
-  (root, args, context, info): Promise<ResulType> | ResulType | void
+  (root: any, args: any, context: any, info: any): PromiseLike<ResulType | void> | ResulType | void;
 }
 
 export interface ErrorFunction<ErrorType> {
-  (root, args, context, err): ErrorType | void
+  (root: any, args: any, context: any, info: any, err: any): PromiseLike<ErrorType | void> | ErrorType | void;
 }
 
 export interface CreateResolverFunction {
-  <R, E>(resFn: ResultFunction<R> | null, errFn?: ErrorFunction<E>): Resolver<R>
+  <R, E>(resFn: ResultFunction<R> | null, errFn?: ErrorFunction<E>): Resolver<R>;
 }
 
 export interface ComposeResolversFunction {
-  ( resolvers: any ): {} // { [name: string]: Resolver<R> | {} }
+  ( resolvers: { }): {}; // { [name: string]: Resolver<R> | {} }
 }
+
+export type ResolverHeader<R> = (root: any, args: any, context: any, info: any) => PromiseLike<R> | R;
 
 export interface Resolver<ResulType> {
-  (root, args: {}, context: {}, info: {}): Promise<ResulType>
-  createResolver: CreateResolverFunction
-  compose: ComposeResolversFunction
+  (root: any, args: any, context: any, info: any): PromiseLike<ResulType> | ResulType;
+  createResolver: CreateResolverFunction;
+  compose: ComposeResolversFunction;
 }
 
-export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>) => {
+export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFunction<R>, errFn: ErrorFunction<E>): Resolver<R> => {
   const Promise = getPromise();
-  const baseResolver: Resolver<R> = ((root, args = {}, context = {}, info = {}) => {
+
+  const baseResolver: Resolver<R> = ((root: any = {}, args: any = {}, context: any = {}, info: any = {}) => {
     // Return resolving promise with `null` if the resolver function param is not a function
     if (!isFunction(resFn)) return Promise.resolve(null);
     return Promisify(resFn)(root, args, context, info).catch(e => {
@@ -40,14 +43,14 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
         throw parsedError || e
       });
     });
-  }) as any;
+  }) as Resolver<R>;
 
-  baseResolver.createResolver = (cResFn, cErrFn) => {
+  baseResolver.createResolver = <R, E>(cResFn: ResultFunction<R>, cErrFn: ErrorFunction<E>): Resolver<R> => {
     const Promise = getPromise();
 
-    const childResFn = (root, args, context, info = {}) => {
+    const childResFn: ResultFunction<R> = (root: any, args: any, context: any, info: any): PromiseLike<R | void> => {
       // Start with either the parent resolver function or a no-op (returns null)
-      const entry = isFunction(resFn) ? Promisify(resFn)(root, args, context, info) : Promise.resolve(null);
+      const entry: PromiseLike<R> = isFunction(resFn) ? Promisify(resFn)(root, args, context, info) : Promise.resolve(null);
       return entry.then(r => {
         // If the parent returns a value, continue
         if (isNotNullOrUndefined(r)) return r;
@@ -56,15 +59,15 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
       });
     };
 
-    const childErrFn = (root, args, context, err) => {
+    const childErrFn: ErrorFunction<E> = (root: any, args: any, context: any, info: any, err: E): PromiseLike<E | void> => {
       // Start with either the child error handler or a no-op (returns null)
-      const entry = isFunction(cErrFn) ? Promisify(cErrFn)(root, args, context, err) : Promise.resolve(null);
+      const entry: PromiseLike<E> = isFunction(cErrFn) ? Promisify(cErrFn)(root, args, context, info, err) : Promise.resolve(null);
 
       return entry.then(r => {
         // If the child returns a value, throw it
         if (isNotNullOrUndefined(r)) throw r;
         // Call the parent error handler or a no-op (returns null)
-        return isFunction(errFn) ? Promisify(errFn)(root, args, context, err).then(e => {
+        return isFunction(errFn) ? Promisify(errFn)(root, args, context, info, err).then(e => {
           // If it resolves, throw the resolving value or the original error
           throw e || err;
         }, e => {
@@ -78,7 +81,7 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
     return createResolver(childResFn, childErrFn);
   }
 
-  baseResolver.compose = ( resolvers: {} ) => {
+  baseResolver.compose = ( resolvers: Record<string, { resolve: ResultFunction<any>; error: ErrorFunction<any> }> | ResultFunction<any>): Record<string, { resolve: ResultFunction<any>; error: ErrorFunction<any> }> {
     const composed = {};
     Object.keys(resolvers).forEach(key => {
       const _resolver = resolvers[key];
@@ -89,7 +92,7 @@ export const createResolver: CreateResolverFunction = <R, E>(resFn: ResultFuncti
         : baseResolver.createResolver(_resolver);
     });
     return composed;
-  }
+  };
 
   return baseResolver;
 };
