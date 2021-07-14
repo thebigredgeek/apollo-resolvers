@@ -39,16 +39,16 @@ jobs:
   node-v8:
     <<: *node-base
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:16
   node-v10:
     <<: *node-base
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:16
   node-v12:
     <<: *node-base
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:16
   node-v14:
     <<: *node-base
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:16
