@@ -6,6 +6,7 @@ workflows:
       - node-v8
       - node-v10
       - node-v12
+      - node-v14
 version: 2
 jobs:
   node-base: &node-base
@@ -52,3 +53,7 @@ jobs:
     <<: *node-base
     docker:
       - image: circleci/node:12
+  node-v14:
+    <<: *node-base
+    docker:
+      - image: circleci/node:14
