@@ -49,7 +49,7 @@
     "express": "4.16.4",
     "graphql-server-express": "0.6.0",
     "mocha": "3.5.3",
-    "rimraf": "2.6.3",
+    "rimraf": "3.0.2",
     "sinon": "1.17.7",
     "supertest": "3.4.2",
     "typescript": "2.9.2",
