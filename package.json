@@ -42,7 +42,7 @@
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "1.7.0",
     "babel-register": "6.26.0",
-    "bluebird": "3.5.4",
+    "bluebird": "3.7.2",
     "chai": "3.5.0",
     "eslint": "3.19.0",
     "eslint-plugin-babel": "3.3.0",
