@@ -43,7 +43,7 @@
     "babel-preset-env": "1.7.0",
     "babel-register": "6.26.0",
     "bluebird": "3.5.4",
-    "chai": "3.5.0",
+    "chai": "4.5.0",
     "eslint": "3.19.0",
     "eslint-plugin-babel": "3.3.0",
     "express": "4.16.4",
