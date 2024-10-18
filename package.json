@@ -44,7 +44,7 @@
     "babel-register": "6.26.0",
     "bluebird": "3.5.4",
     "chai": "3.5.0",
-    "eslint": "3.19.0",
+    "eslint": "9.13.0",
     "eslint-plugin-babel": "3.3.0",
     "express": "4.16.4",
     "graphql-server-express": "0.6.0",
