@@ -43,12 +43,12 @@ jobs:
   node-v10:
     <<: *node-base
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10.24.1
   node-v12:
     <<: *node-base
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:12.22.7
   node-v14:
     <<: *node-base
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:14.18.2
